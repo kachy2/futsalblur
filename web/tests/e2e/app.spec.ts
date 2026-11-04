@@ -51,16 +51,27 @@ test('find heads, adjust and save a blurred video', async ({ baseURL }) => {
     if (process.env.APP_DETS) writeFileSync(process.env.APP_DETS, JSON.stringify(dets));
 
     await page.getByRole('button', { name: /Save blurred video|흐린 영상 저장/ }).click();
-    await expect(page.getByText(/Saved:|저장했습니다/)).toBeVisible({ timeout: 30 * 60_000 });
-    const bytes = await page.evaluate(async () => {
-      const f = await (await (await navigator.storage.getDirectory()).getFileHandle('e2e_output.mp4')).getFile();
-      return Array.from(new Uint8Array(await f.arrayBuffer()));
-    });
-    const buf = Uint8Array.from(bytes);
+    const ended = page.getByText(/Saved:|저장했습니다|Error:|오류:/);
+    await expect(ended).toBeVisible({ timeout: 30 * 60_000 });
+    expect(await ended.textContent()).toMatch(/Saved:|저장했습니다/);
+    // read the written file back in 4 MB pieces (base64): a whole 4K file as one value would not fit the test's memory
+    const size = await page.evaluate(async () => (await (await (await navigator.storage.getDirectory()).getFileHandle('e2e_output.mp4')).getFile()).size);
+    const parts: Buffer[] = [];
+    for (let off = 0; off < size; off += 4 << 20) {
+      const b64 = await page.evaluate(async ([o, n]) => {
+        const f = await (await (await navigator.storage.getDirectory()).getFileHandle('e2e_output.mp4')).getFile();
+        const piece = new Uint8Array(await f.slice(o, o + n).arrayBuffer());
+        let s = '';
+        for (let i = 0; i < piece.length; i += 0x8000) s += String.fromCharCode(...piece.subarray(i, i + 0x8000));
+        return btoa(s);
+      }, [off, 4 << 20] as [number, number]);
+      parts.push(Buffer.from(b64, 'base64'));
+    }
+    const buf = new Uint8Array(Buffer.concat(parts));
     if (OUT) writeFileSync(OUT, buf);
     const out = new Input({ source: new BufferSource(buf), formats: ALL_FORMATS });
     const video = (await out.getPrimaryVideoTrack())!;
-    const durationS = await out.computeDuration();
+    const durationS = (await out.computeDuration()) - (await video.getFirstTimestamp());
     const audio = await out.getPrimaryAudioTrack();
     console.log('output', { bytes: buf.length, durationS, width: video.displayWidth, height: video.displayHeight, rotation: video.rotation,
       codec: video.codec, audio: audio?.codec ?? null });

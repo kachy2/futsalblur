@@ -27,8 +27,9 @@ self.onmessage = async (ev: MessageEvent) => {
     if (!track) throw new Error('no video track');
     if (!(await track.canDecode())) throw new Error(`this browser cannot decode the video (${track.codec ?? 'unknown codec'})`);
     const audio = await input.getPrimaryAudioTrack();
-    const durationS = await input.computeDuration();
     const first = await track.getFirstTimestamp();
+    // the length from the first frame (a clip cut out of a longer recording may keep its timestamps)
+    const durationS = Math.max(0, (await input.computeDuration()) - first);
     const stats = await track.computePacketStats(200).catch(() => null);
     const W = track.displayWidth;
     const H = track.displayHeight;

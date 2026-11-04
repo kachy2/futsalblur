@@ -38,7 +38,7 @@ self.onmessage = async (ev: MessageEvent) => {
       video: {
         forceTranscode: true, allowTransformationMetadata: false, codec: 'avc', processedWidth: W, processedHeight: H,
         // about the bitrate of the original (4K phone recordings: 40-50 Mbps), at least 4 Mbps
-        bitrate: a.bitrate ? Math.min(60e6, Math.max(4e6, a.bitrate)) : QUALITY_HIGH,
+        bitrate: a.bitrate ? Math.round(Math.min(60e6, Math.max(4e6, a.bitrate))) : QUALITY_HIGH,
         process: (sample) => {
           if (offset === null) offset = sample.timestamp - a.timestamps[0];
           j = nearestFrame(a.timestamps, sample.timestamp - offset, j);
@@ -60,7 +60,8 @@ self.onmessage = async (ev: MessageEvent) => {
     // self-check: reopen what was written and read its duration
     const blob = handle ? await handle.getFile() : new Blob([(target as BufferTarget).buffer!], { type: 'video/mp4' });
     const check = new Input({ source: new BlobSource(blob), formats: ALL_FORMATS });
-    const durationS = await check.computeDuration();
+    const checkVideo = await check.getPrimaryVideoTrack();
+    const durationS = (await check.computeDuration()) - (checkVideo ? await checkVideo.getFirstTimestamp() : 0);
     const audio = !!(await check.getPrimaryAudioTrack());
     postMessage({ type: 'done', bytes: blob.size, durationS, audio, blurred, wallS: (performance.now() - t0) / 1000,
       blob: handle ? null : blob });
