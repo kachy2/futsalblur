@@ -1,0 +1,8 @@
+node_modules/
+dist/
+test-results/
+playwright-report/
+web/public/ort/
+# the detector model is committed only once a model trained on openly licensed data is ready (see web/public/models/NOTICE.md)
+web/public/models/*.onnx
+*.log
