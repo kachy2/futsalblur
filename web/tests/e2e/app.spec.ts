@@ -27,7 +27,8 @@ test('find heads, adjust and save a blurred video', async ({ baseURL }) => {
     };
   });
   try {
-    await page.goto(`/${process.env.APP_QUERY ?? ''}`);
+    // relative to baseURL, so APP_URL may point at a sub-path such as https://<user>.github.io/<repo>/
+    await page.goto(`./${process.env.APP_QUERY ?? ''}`);
     // the first visit installs the service worker and reloads once; WASM threads need the isolated page
     await expect.poll(() => page.evaluate(() => crossOriginIsolated).catch(() => false), { timeout: 60_000 }).toBe(true);
     await page.setInputFiles('input[type=file]', VIDEO);
