@@ -169,7 +169,7 @@
   });
 
   function presetLabel(p: Preset): string {
-    return { max: t.presetMax, faces: t.presetFaces, balanced: t.presetBalanced, least: t.presetLeast }[p.id];
+    return { max: t.presetMax, faces: t.presetFaces, more: t.presetMore, balanced: t.presetBalanced, least: t.presetLeast }[p.id];
   }
 
   function downloadJson() {

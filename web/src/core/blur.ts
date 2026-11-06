@@ -15,7 +15,8 @@ export interface BlurOptions {
   style: 'blur' | 'pixelate';
 }
 
-export const DEFAULT_BLUR: BlurOptions = { grow: 0.2, strength: 0.2, shape: 'ellipse', style: 'blur' };
+/** grow 0.1: the shipped model's boxes already reach from the top of the head to the chin */
+export const DEFAULT_BLUR: BlurOptions = { grow: 0.1, strength: 0.2, shape: 'ellipse', style: 'blur' };
 
 export interface BlurArea {
   /** the grown box in whole pixels, clipped to the frame */

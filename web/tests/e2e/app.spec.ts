@@ -41,8 +41,10 @@ test('find heads, adjust and save a blurred video', async ({ baseURL }) => {
     // the presets set the threshold; the preview is drawn
     await page.getByLabel(/Least blur|흐림 최소/).check();
     await expect(page.locator('legend strong')).toHaveText('0.30');
-    await page.getByLabel(/Balanced|균형/).check();
+    await page.getByLabel(/More cover|넉넉히/).check();
     await expect(page.locator('legend strong')).toHaveText('0.20');
+    await page.getByLabel(/Balanced|균형/).check();
+    await expect(page.locator('legend strong')).toHaveText('0.25');
     await expect.poll(() => page.locator('canvas.preview').evaluate((c: HTMLCanvasElement) => c.width)).toBeGreaterThan(0);
     // the detections file (APP_DETS keeps a copy, e.g. for a comparison with the reference tool)
     const [download] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: /detections|검출 결과/ }).click()]);
