@@ -7,8 +7,8 @@ similar) and blurs them, so the video can be shared without showing who is who, 
 
 - **No install** — runs in the browser (Chrome/Edge on a PC recommended)
 - **No upload** — the video never leaves the device: detection, blurring and saving all happen in the browser
-- **Adjustable** — choose how sure the detector must be before a box is blurred (presets 0.05 / 0.1 / 0.2 / 0.25 / 0.3 or any
-  value; 0.25 is the default), how far the blur reaches beyond each head, its strength, and blur or mosaic
+- **Adjustable** — choose how sure the detector must be before a box is blurred (presets 0.05 / 0.1 / 0.2 / 0.275 / 0.3 or any
+  value; 0.275 is the default), how far the blur reaches beyond each head, its strength, and blur or mosaic
 - **Detections out** — download the boxes the detector found (JSON) to use them elsewhere
 
 The head detector was trained on the maintainer's own recordings with labels made by openly licensed models. At the

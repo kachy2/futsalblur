@@ -3,7 +3,7 @@
   import { APP_ROOT } from './base';
   import { detectionsJson, type Analysis } from './core/analysis';
   import { blurBoxes, DEFAULT_BLUR, type BlurOptions } from './core/blur';
-  import { DEFAULT_THRESHOLD, PRESETS, type Preset } from './core/settings';
+  import { DEFAULT_THRESHOLD, PRESETS, formatThreshold, type Preset } from './core/settings';
   import { buildTracks, type FrozenTracks } from './core/tracks';
   import { strings, type Lang } from './ui/i18n';
 
@@ -263,12 +263,12 @@
       <p class="small muted">{t.frame(frameIdx, result.timestamps.length, result.timestamps[frameIdx] - result.timestamps[0])} · {t.perFrame(perFrame)}</p>
 
       <fieldset>
-        <legend>{t.threshold}: <strong>{threshold.toFixed(2)}</strong></legend>
+        <legend>{t.threshold}: <strong>{formatThreshold(threshold)}</strong></legend>
         {#each PRESETS as p (p.id)}
           <label class="choice"><input type="radio" name="preset" checked={Math.abs(threshold - p.threshold) < 1e-9}
             onchange={() => (threshold = p.threshold)} /> {presetLabel(p)}</label>
         {/each}
-        <input type="range" min="0.05" max="0.6" step="0.01" bind:value={threshold} />
+        <input type="range" min="0.05" max="0.6" step="0.005" bind:value={threshold} />
       </fieldset>
 
       <div class="grid">

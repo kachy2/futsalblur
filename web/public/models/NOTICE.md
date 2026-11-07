@@ -33,24 +33,27 @@ model comes from, how it was made, how well it works and what it is not good at.
 
 ## How well it works
 Measured on 4,056 frames of the maintainer's recordings that were not used for training, with the app's default blur (an
-oval over each box grown by 10% on every side).
+oval over each box grown by 15% on every side).
 
 | Score at least | Faces at least half blurred | Faces at least 90% blurred | Share of the frame blurred |
 |---|---|---|---|
-| 0.05 | 99.98% | 99.86% | 1.28% |
-| 0.1 | 99.80% | 99.61% | 0.93% |
-| 0.2 | 99.77% | 98.79% | 0.65% |
-| **0.25 (default)** | **99.73%** | **98.09%** | **0.50%** |
-| 0.3 | 99.61% | 97.11% | 0.37% |
+| 0.05 | 100.00% | 99.95% | 1.47% |
+| 0.1 | 99.82% | 99.73% | 1.08% |
+| 0.2 | 99.80% | 99.36% | 0.75% |
+| **0.275 (default)** | **99.73%** | **98.75%** | **0.50%** |
+| 0.3 | 99.64% | 98.45% | 0.43% |
 
 - Faces: the 4,395 faces that an independent face detector (OpenCV YuNet, score 0.7 or more) found in those frames. YuNet
   was used only for this measurement, not for training.
-- At 0.25, 12 of those faces were less than half blurred: 9 were the same face printed on a poster behind the fence, 1 was
-  a false find of the face detector, 1 was too unclear to tell, and 1 was a real face, 44% blurred.
-- Blurs on things that are not heads: at 0.2, about 1.3 per frame (95% interval 0.9-1.8), counted by eye on a random
-  sample of 70 boxes. Most are torsos, hands and legs next to a head; some are poles and signs.
+- At 0.275, 12 of those faces were less than half blurred: 10 were a face printed on a poster behind the fence (seen in
+  two recordings), 1 was a false find of the face detector (on a torso), and 1 was a real face, 48% blurred.
+- Blurs on things that are not heads, counted by eye on a random sample of 70 boxes: at 0.2, about 1.3 per frame (95%
+  interval 0.9-1.8); at 0.275, about 0.5 per frame (0.2-0.8). Most are torsos, hands and legs next to a head; some are
+  poles and signs.
 - Other places and cameras (416 frames from 8 clips filmed at another venue or with other cameras, 809 faces): every
-  face was blurred at 0.25, but there were more blurs on things that are not heads than at the training venues.
+  face was at least half blurred at 0.275. At 0.2 the eye-checked sample had 5 boxes that were not heads out of 7 in
+  these clips, against 17 of 56 at the training venues. The sample is small, but it points to more false blurs at new
+  venues.
 
 ## Limits
 - Trained on fixed-camera futsal from two venues. Other sports, venues, camera heights and lenses are less tested.
